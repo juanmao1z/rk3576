@@ -1,0 +1,13 @@
+{
+  "name": "flying_objects_yolov8m",
+  "repo_id": "Javvanny/yolov8m_flying_objects_detection",
+  "filename": "yolov8m/weights/best.pt",
+  "classes": [
+    "Drone",
+    "Airplane",
+    "Helicopter",
+    "Bird"
+  ],
+  "task": "Detect flying objects from ground cameras.",
+  "downloaded_to": "D:\\Desktop\\rk3576\\workspace\\drone_pt_detector\\models\\flying_objects_yolov8m.pt"
+}

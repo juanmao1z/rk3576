@@ -1,0 +1,2 @@
+ObjectHypothesis hypothesis
+geometry_msgs/PoseWithCovariance pose

@@ -1,0 +1,107 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python / virtualenv / caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Node / local tooling
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.codex/skills/
+
+# Build outputs
+build/
+install/
+log/
+logs/
+dist/
+out/
+target/
+cmake-build-*/
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.exe
+
+# ROS / colcon generated outputs
+**/build/
+**/install/
+**/log/
+
+# Training, inference, and generated datasets
+runs/
+**/runs/
+**/.cache/
+**/_hf_cache/
+**/data/open_datasets/
+drone_pt_detector/data/
+drone_pt_detector/exports/
+
+# Large model and exported artifacts
+*.pt
+*.pth
+*.onnx
+*.rknn
+*.engine
+*.tflite
+*.bin
+*.weights
+
+# Media/test images and captured video
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.mp4
+*.avi
+
+# Archives and packaged datasets
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+
+# Dependency/vendor archives and upstream reference trees
+rknn_wheels/
+rknn_model_zoo/
+third_party/
+packages/**/*.deb
+packages/**/*.whl
+
+# RKNN example generated/native binaries
+rknn_yolo11/**/build_native/
+rknn_yolo11/**/lib/
+rknn_yolo11/**/rknn_yolo11_demo
+rknn_yolo11/**/rknn_yolo11_demo_zero_copy
+rknn_yolo11/**/rknn_yolo11_demo_camera_native
+
+# Local secrets / environment
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+
+# Runtime temp files
+*.log
+*.tmp
+*.part
