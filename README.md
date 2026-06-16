@@ -1,13 +1,16 @@
 # RK3576 Workspace
 
-这是 RK3576 视觉、摄像头、YOLO/RKNN、ROS2 和无人机检测工程区。目录里保留可维护代码、启动脚本、README、少量必要依赖和板端部署说明；数据集、临时训练输出、第三方上游源码和模型文件不作为日常整理对象。
+这是 RK3576 视觉、摄像头、YOLO/RKNN、ROS2、无人机检测和 DM-H3510 云台工程区。该目录是当前 Git 仓库根目录。
+
+这里保留可维护代码、启动脚本、README、少量必要依赖和板端部署说明。数据集、临时训练输出、第三方上游源码、生成文档和模型文件不作为日常源码整理对象。
 
 ## 项目定位
 
 - `workspace` 是当前 RK3576 视觉项目的主入口，不建议再拆成新的顶层目录。
 - 各 `*_ws` 目录已经被 Windows 一键脚本、开发板启动脚本和 README 引用，目录名本身是运行约定。
 - 通用 YOLO 和无人机 YOLO 分开维护：通用版本保留 COCO 标签和通用模型，无人机版本只保存无人机识别链路。
-- DM-H3510 云台控制单独放在 `gimbal_dm_h3510_ws`；它和视觉工作区联动，但不混入相机或 YOLO 代码。
+- DM-H3510 ROS2 驱动放在 `dm_h3510_ros_ws`；云台工程资料、PC 烟测和配置记录放在 `gimbal_dm_h3510_ws`。
+- 云台和视觉工作区通过 ROS2 话题或上层脚本联动，不混入相机或 YOLO 代码。
 - C++ Canvas 版是当前 RK3576 实时检测的主推运行形态；Python 版本保留为对照、调试和兼容方案。
 
 ## 目录结构
@@ -20,13 +23,15 @@
 | `camera_web_ws` | 早期/备用 ROS2 Python 摄像头 Web 服务 | 保留对照，少改 |
 | `yolo_web_cpp_ws` | 通用 YOLO11 RKNN C++ Canvas Web/ROS2 工作区 | 主用通用 YOLO，可维护 |
 | `drone_yolo_web_cpp_ws` | 无人机 YOLO11 RKNN C++ Canvas Web/ROS2 专用工作区 | 主用无人机识别，可维护 |
-| `gimbal_dm_h3510_ws` | DM-H3510 云台控制、配置、脚本和后续视觉跟踪闭环 | 新增云台工作区，可维护 |
+| `dm_h3510_ros_ws` | DM-H3510 ROS2 Python/C++ 驱动、构建和板端运行脚本 | 云台 ROS2 驱动工作区，可维护 |
+| `gimbal_dm_h3510_ws` | DM-H3510 工程资料、PC 烟测、配置和协议记录 | 云台工程资料工作区，可维护 |
 | `yolo_web_py_ws` | Python RKNN 推理并在服务端画框的 Web/ROS2 工作区 | 保留非 Canvas 版本 |
 | `yolo_web_py_canvas_ws` | Python RKNN 推理加浏览器 Canvas 叠框的 Web/ROS2 工作区 | 保留 Canvas 对照版本 |
 | `drone_pt_detector` | Windows PC 端无人机 `.pt` 数据集、训练、验证和导出工具 | PC 训练/测试入口 |
 | `rknn_yolo11` | RKNN YOLO11 独立示例和板端说明 | 示例和验证入口 |
 | `scripts` | 当前 workspace 的统一 Windows 入口脚本 | 统一入口优先放这里 |
-| `docs` | workspace 目录地图、工件说明和维护约定 | 文档入口 |
+| `docs` | workspace 目录地图、工件说明、维护约定和生成文档输出 | 文档入口 |
+| `tmp_gs_usb_rk3576_build` | `gs_usb` 临时构建试验区 | 临时构建区，不作为源码入口 |
 | `packages` | 外部安装包、deb、wheel 等归档 | 只归档，不混入源码 |
 | `rknn_wheels` | RK3576/aarch64 板端 Python wheel 包 | 依赖归档 |
 | `rknn_model_zoo` | Rockchip RKNN Model Zoo 上游参考副本 | 上游参考，避免日常改动 |
@@ -118,7 +123,17 @@ http://127.0.0.1:8091/
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_pt_detector\scripts\detect.ps1 -Source 0 -Show -DroneOnly
 ```
 
-### DM-H3510 云台控制
+### DM-H3510 ROS2 驱动
+
+工作区：
+
+```text
+D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
+```
+
+该目录保存 Python/C++ ROS2 节点、板端构建脚本和部署脚本。它发布 `/gimbal/state`，订阅 `/gimbal/position_cmd` 和 `/gimbal/target_joint_state`。
+
+### DM-H3510 工程资料和 PC 烟测
 
 工作区：
 
@@ -126,7 +141,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_pt_de
 D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
 ```
 
-当前只建立结构和维护边界。拿到 DM-H3510 通信方式、设备节点和协议后，在该工作区补充 `config`、`scripts\board`、`scripts\windows` 和 `src`。
+该目录保存 PC 侧 USB2CANFD 烟测、工程记录、配置样例和协议资料。它不是 ROS2 主工作区。
 
 ## 端口和 ROS 话题
 
@@ -149,7 +164,7 @@ D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
 vision_msgs/msg/Detection2DArray
 ```
 
-DM-H3510 云台后续建议单独发布/订阅云台相关接口，例如 `/gimbal/state` 和 `/gimbal/cmd`；视觉侧继续只负责 `/yolo/detections`。
+DM-H3510 ROS2 驱动发布/订阅云台相关接口。视觉侧继续只负责 `/yolo/detections`。
 
 摄像头分辨率约定：
 
@@ -161,7 +176,8 @@ DM-H3510 云台后续建议单独发布/订阅云台相关接口，例如 `/gimb
 
 - 不移动或重命名 `camera_web_cpp_ws`、`yolo_web_cpp_ws`、`drone_yolo_web_cpp_ws` 等工作区目录，除非同步改完所有 Windows 和板端脚本。
 - 不把通用 YOLO 和无人机 YOLO 合并；两者模型、标签和 README 要保持独立。
-- 不把 DM-H3510 云台驱动混入相机或 YOLO 工作区；联动逻辑通过上层脚本或 ROS2 话题组合。
+- 不把 DM-H3510 ROS2 驱动混入相机或 YOLO 工作区；联动逻辑通过上层脚本或 ROS2 话题组合。
+- 不把 `dm_h3510_ros_ws` 和 `gimbal_dm_h3510_ws` 混成一个入口；前者负责 ROS2 驱动，后者负责工程资料和 PC 烟测。
 - 不把第三方源码、Model Zoo、数据集、训练输出、临时文件混入主工作区入口。
 - 不在 `rknn_model_zoo` 和 `third_party` 里做项目定制逻辑；需要定制时放到对应 `*_ws` 或 `rknn_yolo11`。
 - 新增 Windows 一键脚本优先放到 `scripts\windows`，专用项目脚本放到对应工作区的 `scripts\windows`。
@@ -180,9 +196,10 @@ D:\Desktop\rk3576\workspace\camera_web_cpp_ws\README.md
 D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\README.md
 D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\README.md
 D:\Desktop\rk3576\workspace\drone_pt_detector\README.md
+D:\Desktop\rk3576\workspace\dm_h3510_ros_ws\README.md
 D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws\README.md
 ```
 
 ## 整理结论
 
-`workspace` 目录不需要做大规模物理重排。当前更合适的整理方式是保留已被脚本引用的视觉工作区目录，同时为 DM-H3510 新增独立 `gimbal_dm_h3510_ws`，把入口说明、启动方式、端口、话题和维护边界集中到本 README，避免移动目录导致脚本和板端部署路径失效。
+`workspace` 目录不需要做大规模物理重排。当前更合适的整理方式是保留已被脚本引用的视觉工作区目录，同时把 DM-H3510 的 ROS2 驱动和 PC 工程资料分清楚。入口说明、启动方式、端口、话题和维护边界集中到本 README，避免移动目录导致脚本和板端部署路径失效。

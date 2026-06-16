@@ -53,6 +53,9 @@ runs/
 **/data/open_datasets/
 drone_pt_detector/data/
 drone_pt_detector/exports/
+docs/generated/
+tmp_gs_usb_rk3576_build/
+gimbal_dm_h3510_ws/cpp_v1_1_smoke/build/
 
 # Large model and exported artifacts
 *.pt
