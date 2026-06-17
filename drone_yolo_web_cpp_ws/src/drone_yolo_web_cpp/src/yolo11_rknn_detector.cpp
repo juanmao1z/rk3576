@@ -1,4 +1,4 @@
-// YOLO11 RKNN C API 推理与后处理实现。
+// YOLO RKNN C API 推理与后处理实现。
 // 输入来自摄像头 MJPEG 压缩帧，因此推理前必须先 JPEG 解码并做 letterbox。
 #include "drone_yolo_web_cpp/yolo11_rknn_detector.hpp"
 
@@ -20,6 +20,13 @@ namespace
 {
 
 constexpr int kMaxDetections = 128;
+constexpr int kYolov5AnchorsPerBranch = 3;
+// models/yolov5.rknn 对应 best.pt 的 UAV 单类别 YOLOv5 anchor，单位是 640 输入像素。
+constexpr std::array<std::array<std::array<float, 2>, kYolov5AnchorsPerBranch>, 3> kYolov5UavAnchors {{
+  {{{11.046875F, 5.36328125F}, {19.125F, 8.7890625F}, {37.84375F, 16.90625F}}},
+  {{{62.59375F, 31.921875F}, {98.1875F, 55.59375F}, {128.125F, 78.1875F}}},
+  {{{206.125F, 111.25F}, {255.5F, 186.75F}, {367.25F, 241.875F}}},
+}};
 
 std::vector<unsigned char> read_file(const std::string & path)
 {
@@ -47,6 +54,46 @@ float dequant_i8(int8_t value, int32_t zero_point, float scale)
 float dequant_u8(uint8_t value, int32_t zero_point, float scale)
 {
   return (static_cast<float>(value) - static_cast<float>(zero_point)) * scale;
+}
+
+int tensor_channels(const rknn_tensor_attr & attr)
+{
+  // RKNN 输出可能是 NCHW 或 NHWC。统一封装后，后处理逻辑只关心语义维度。
+  if (attr.n_dims < 4) {
+    return 0;
+  }
+  return attr.fmt == RKNN_TENSOR_NHWC ? static_cast<int>(attr.dims[3]) :
+         static_cast<int>(attr.dims[1]);
+}
+
+int tensor_height(const rknn_tensor_attr & attr)
+{
+  if (attr.n_dims < 4) {
+    return 0;
+  }
+  return attr.fmt == RKNN_TENSOR_NHWC ? static_cast<int>(attr.dims[1]) :
+         static_cast<int>(attr.dims[2]);
+}
+
+int tensor_width(const rknn_tensor_attr & attr)
+{
+  if (attr.n_dims < 4) {
+    return 0;
+  }
+  return attr.fmt == RKNN_TENSOR_NHWC ? static_cast<int>(attr.dims[2]) :
+         static_cast<int>(attr.dims[3]);
+}
+
+int tensor_offset(const rknn_tensor_attr & attr, int channel, int row, int col)
+{
+  // 按 RKNN 实际张量布局计算线性偏移，避免在解码函数里散落 NCHW/NHWC 分支。
+  const int channels = tensor_channels(attr);
+  const int height = tensor_height(attr);
+  const int width = tensor_width(attr);
+  if (attr.fmt == RKNN_TENSOR_NHWC) {
+    return (row * width + col) * channels + channel;
+  }
+  return channel * height * width + row * width + col;
 }
 
 int8_t quant_i8(float value, int32_t zero_point, float scale)
@@ -158,7 +205,10 @@ void Yolo11RknnDetector::init_model()
     output.qnt_type == RKNN_TENSOR_QNT_AFFINE_ASYMMETRIC &&
     (output.type == RKNN_TENSOR_INT8 || output.type == RKNN_TENSOR_UINT8);
 
-  if (io_num_.n_output >= 2) {
+  if (is_yolov5_three_output_model()) {
+    class_count_ =
+      std::max(1, tensor_channels(output_attrs_.front()) / kYolov5AnchorsPerBranch - 5);
+  } else if (io_num_.n_output >= 2) {
     class_count_ = std::max(1, static_cast<int>(output_attrs_.at(1).dims[1]));
   }
   if (labels_.empty()) {
@@ -329,6 +379,10 @@ std::vector<Detection> Yolo11RknnDetector::postprocess(
   int image_height,
   const LetterboxInfo & info) const
 {
+  if (is_yolov5_three_output_model()) {
+    return postprocess_yolov5(outputs, image_width, image_height, info);
+  }
+
   // 当前 YOLO11 RKNN 输出按 3 个尺度分支排列，每个分支包含 box 和 score。
   std::vector<Detection> candidates;
   const int branches = 3;
@@ -354,7 +408,7 @@ std::vector<Detection> Yolo11RknnDetector::postprocess(
     const int grid_h = box_attr.dims[2];
     const int grid_w = box_attr.dims[3];
     const int stride = model_height_ / grid_h;
-    process_branch(
+    process_yolo11_branch(
       box_output,
       score_output,
       score_sum_output,
@@ -368,6 +422,16 @@ std::vector<Detection> Yolo11RknnDetector::postprocess(
       candidates);
   }
 
+  return finalize_detections(std::move(candidates), image_width, image_height, info);
+}
+
+std::vector<Detection> Yolo11RknnDetector::finalize_detections(
+  std::vector<Detection> candidates,
+  int image_width,
+  int image_height,
+  const LetterboxInfo & info) const
+{
+  // 两类模型都先产生 640 输入坐标下的候选框，再统一执行 NMS 和原图坐标还原。
   std::sort(
     candidates.begin(),
     candidates.end(),
@@ -401,7 +465,130 @@ std::vector<Detection> Yolo11RknnDetector::postprocess(
   return scaled;
 }
 
-void Yolo11RknnDetector::process_branch(
+bool Yolo11RknnDetector::is_yolov5_three_output_model() const
+{
+  // YOLOv5 RKNN 导出形态：3 个尺度输出，每个输出通道数为 3 * (5 + class_count)。
+  if (io_num_.n_output != 3 || output_attrs_.size() != 3) {
+    return false;
+  }
+
+  for (const auto & attr : output_attrs_) {
+    const int channels = tensor_channels(attr);
+    const int height = tensor_height(attr);
+    const int width = tensor_width(attr);
+    if (channels <= 0 || height <= 0 || width <= 0) {
+      return false;
+    }
+    if (channels % kYolov5AnchorsPerBranch != 0) {
+      return false;
+    }
+    if (channels / kYolov5AnchorsPerBranch < 6) {
+      return false;
+    }
+  }
+  return true;
+}
+
+std::vector<Detection> Yolo11RknnDetector::postprocess_yolov5(
+  const std::vector<rknn_output> & outputs,
+  int image_width,
+  int image_height,
+  const LetterboxInfo & info) const
+{
+  std::vector<Detection> candidates;
+  for (int branch = 0; branch < 3; ++branch) {
+    process_yolov5_branch(
+      outputs.at(static_cast<size_t>(branch)),
+      output_attrs_.at(static_cast<size_t>(branch)),
+      branch,
+      candidates);
+  }
+
+  return finalize_detections(std::move(candidates), image_width, image_height, info);
+}
+
+void Yolo11RknnDetector::process_yolov5_branch(
+  const rknn_output & output,
+  const rknn_tensor_attr & attr,
+  int branch,
+  std::vector<Detection> & candidates) const
+{
+  const int channels = tensor_channels(attr);
+  const int grid_h = tensor_height(attr);
+  const int grid_w = tensor_width(attr);
+  const int values_per_anchor = channels / kYolov5AnchorsPerBranch;
+  const int branch_class_count = values_per_anchor - 5;
+  const int classes = std::min(class_count_, branch_class_count);
+  const int stride = model_height_ / grid_h;
+  const float threshold = static_cast<float>(confidence_threshold_);
+
+  if (classes <= 0 || branch < 0 || branch >= static_cast<int>(kYolov5UavAnchors.size())) {
+    return;
+  }
+
+  for (int row = 0; row < grid_h; ++row) {
+    for (int col = 0; col < grid_w; ++col) {
+      for (int anchor = 0; anchor < kYolov5AnchorsPerBranch; ++anchor) {
+        const int base_channel = anchor * values_per_anchor;
+        const float objectness = tensor_value(
+          output,
+          attr,
+          tensor_offset(attr, base_channel + 4, row, col));
+        if (objectness <= 0.0F) {
+          continue;
+        }
+
+        int class_id = -1;
+        float class_score = 0.0F;
+        for (int c = 0; c < classes; ++c) {
+          const float value = tensor_value(
+            output,
+            attr,
+            tensor_offset(attr, base_channel + 5 + c, row, col));
+          if (value > class_score) {
+            class_score = value;
+            class_id = c;
+          }
+        }
+
+        const float score = objectness * class_score;
+        if (class_id < 0 || score < threshold) {
+          continue;
+        }
+
+        // 输出已经包含 sigmoid。这里按 YOLOv5 Detect 解码公式还原中心点和宽高。
+        const float tx = tensor_value(output, attr, tensor_offset(attr, base_channel, row, col));
+        const float ty = tensor_value(output, attr, tensor_offset(attr, base_channel + 1, row, col));
+        const float tw = tensor_value(output, attr, tensor_offset(attr, base_channel + 2, row, col));
+        const float th = tensor_value(output, attr, tensor_offset(attr, base_channel + 3, row, col));
+        const auto & branch_anchors = kYolov5UavAnchors[static_cast<size_t>(branch)];
+        const auto & anchor_size = branch_anchors[static_cast<size_t>(anchor)];
+        const float center_x =
+          (tx * 2.0F - 0.5F + static_cast<float>(col)) * static_cast<float>(stride);
+        const float center_y =
+          (ty * 2.0F - 0.5F + static_cast<float>(row)) * static_cast<float>(stride);
+        const float width = std::pow(tw * 2.0F, 2.0F) * anchor_size[0];
+        const float height = std::pow(th * 2.0F, 2.0F) * anchor_size[1];
+
+        Detection det;
+        det.class_id = class_id;
+        det.label = class_id >= 0 && class_id < static_cast<int>(labels_.size()) ?
+          labels_[static_cast<size_t>(class_id)] :
+          "unknown";
+        det.score = score;
+        det.x = center_x - width * 0.5F;
+        det.y = center_y - height * 0.5F;
+        det.width = std::max(0.0F, width);
+        det.height = std::max(0.0F, height);
+        if (det.width > 1.0F && det.height > 1.0F) {
+          candidates.push_back(std::move(det));
+        }
+      }
+    }
+  }
+}
+
+void Yolo11RknnDetector::process_yolo11_branch(
   const rknn_output & box_output,
   const rknn_output & score_output,
   const rknn_output * score_sum_output,

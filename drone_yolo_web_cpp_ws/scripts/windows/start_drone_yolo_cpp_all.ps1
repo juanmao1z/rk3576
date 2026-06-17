@@ -1,11 +1,11 @@
-<# 
+<#
 启动无人机 YOLO C++ Canvas 完整链路。
 流程：通过 ADB 在开发板启动摄像头和 drone_yolo_web_cpp，随后映射 8081/8092 到本机并等待健康检查。
 #>
 param(
   [string]$Size = "640x480",
   [Nullable[int]]$Fps = $null,
-  [string]$Model = "/home/lckfb/workspace/trained_yolo11n_best_rk3576_i8.rknn",
+  [string]$Model = "/home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolo11n.rknn",
   [string]$Labels = "drone"
 )
 

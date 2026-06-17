@@ -4,7 +4,7 @@
 set -eo pipefail
 
 YOLO_WS=/home/lckfb/workspace/drone_yolo_web_cpp_ws
-RKNN_MODEL=${RKNN_MODEL:-/home/lckfb/workspace/trained_yolo11n_best_rk3576_i8.rknn}
+RKNN_MODEL=${RKNN_MODEL:-${YOLO_WS}/models/yolo11n.rknn}
 DETECTION_LABELS=${DETECTION_LABELS:-drone}
 
 cd "${YOLO_WS}"

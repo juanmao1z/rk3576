@@ -26,7 +26,7 @@ drone_yolo_web_cpp_ws/
 | 项目 | 默认值 |
 | --- | --- |
 | 输入话题 | `/camera/image_mjpeg` |
-| RKNN 模型 | `/home/lckfb/workspace/trained_yolo11n_best_rk3576_i8.rknn` |
+| RKNN 模型 | `/home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolo11n.rknn` |
 | 标签 | `drone` |
 | YOLO Web 端口 | `8092` |
 | 摄像头原始流 | `http://127.0.0.1:8081/stream.mjpg` |
@@ -77,6 +77,12 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720 -Model /home/lckfb/workspace/trained_yolo11s_best_rk3576_i8.rknn
+```
+
+切换到 YOLOv5 模型：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolov5.rknn -Labels UAV
 ```
 
 多类别模型可以传逗号分隔标签：

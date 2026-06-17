@@ -59,11 +59,11 @@ DroneYoloOverlayNode::DroneYoloOverlayNode()
   input_topic_ = declare_parameter<std::string>("input_topic", "/camera/image_mjpeg");
   model_path_ = declare_parameter<std::string>(
     "model_path",
-    "/home/lckfb/workspace/trained_yolo11n_best_rk3576_i8.rknn");
+    "/home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolo11n.rknn");
   labels_ = parse_labels(declare_parameter<std::string>("labels", "drone"));
   port_ = declare_parameter<int>("port", 8092);
   camera_url_ = declare_parameter<std::string>("camera_url", "http://127.0.0.1:8081/stream.mjpg");
-  confidence_threshold_ = declare_parameter<double>("confidence_threshold", 0.25);
+  confidence_threshold_ = declare_parameter<double>("confidence_threshold", 0.60);
   iou_threshold_ = declare_parameter<double>("iou_threshold", 0.45);
   fps_window_seconds_ = declare_parameter<double>("fps_window_seconds", 2.0);
   detections_topic_ = declare_parameter<std::string>("detections_topic", "/yolo/detections");

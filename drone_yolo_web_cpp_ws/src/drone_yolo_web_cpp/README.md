@@ -9,7 +9,8 @@ C++ + RKNN C API 版无人机实时检测项目。
 ```text
 drone_yolo_web_cpp_ws/
   models/
-    yolo11.rknn
+    yolo11n.rknn
+    yolov5.rknn
   scripts/
     board/
       start_drone_yolo_cpp_all.sh
@@ -34,7 +35,7 @@ drone_yolo_web_cpp_ws/
 ## 默认配置
 
 - 输入话题：`/camera/image_mjpeg`
-- RKNN 模型：`/home/lckfb/workspace/trained_yolo11n_best_rk3576_i8.rknn`
+- RKNN 模型：`/home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolo11n.rknn`
 - 检测标签：`drone`，多类别模型可用逗号分隔字符串，例如 `drone,bird`
 - YOLO Web 端口：`8092`
 - 原始视频来源：`http://127.0.0.1:8081/stream.mjpg`
@@ -91,6 +92,12 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720 -Model /home/lckfb/workspace/trained_yolo11s_best_rk3576_i8.rknn
 ```
 
+切换到 YOLOv5 模型：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolov5.rknn -Labels UAV
+```
+
 覆盖标签：
 
 ```powershell
@@ -114,6 +121,13 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_
 ```bash
 RKNN_MODEL=/home/lckfb/workspace/trained_yolo11s_best_rk3576_i8.rknn \
 /home/lckfb/workspace/drone_yolo_web_cpp_ws/scripts/board/start_drone_yolo_cpp_all.sh --size 1280x720
+```
+
+开发板侧切换到 YOLOv5 模型：
+
+```bash
+RKNN_MODEL=/home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolov5.rknn DETECTION_LABELS=UAV \
+/home/lckfb/workspace/drone_yolo_web_cpp_ws/scripts/board/start_drone_yolo_cpp_all.sh
 ```
 
 开发板侧关闭：

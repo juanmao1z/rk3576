@@ -1,8 +1,8 @@
 #pragma once
 
-// YOLO11 RKNN C API 推理器。
-// 职责包含 JPEG 解码、letterbox 预处理、RKNN 输入输出、YOLO11 DFL 后处理、
-// NMS 和坐标还原；外层 ROS 节点只负责订阅、发布和 Web 快照。
+// YOLO RKNN C API 推理器。
+// 职责包含 JPEG 解码、letterbox 预处理、RKNN 输入输出、后处理、NMS 和坐标还原。
+// 当前兼容两类输出：YOLO11 DFL 多分支输出，以及 YOLOv5 RKNN 三尺度输出。
 
 #include <array>
 #include <chrono>
@@ -77,8 +77,27 @@ private:
     int image_width,
     int image_height,
     const LetterboxInfo & info) const;
+  std::vector<Detection> finalize_detections(
+    std::vector<Detection> candidates,
+    int image_width,
+    int image_height,
+    const LetterboxInfo & info) const;
 
-  void process_branch(
+  // models/yolov5.rknn 使用 YOLOv5 Detect 头：3 个输出尺度，每个尺度 3 个 anchor。
+  bool is_yolov5_three_output_model() const;
+  std::vector<Detection> postprocess_yolov5(
+    const std::vector<rknn_output> & outputs,
+    int image_width,
+    int image_height,
+    const LetterboxInfo & info) const;
+  void process_yolov5_branch(
+    const rknn_output & output,
+    const rknn_tensor_attr & attr,
+    int branch,
+    std::vector<Detection> & candidates) const;
+
+  // 原 YOLO11 RKNN 优化输出：每个尺度包含 box、score，以及可选 score_sum。
+  void process_yolo11_branch(
     const rknn_output & box_output,
     const rknn_output & score_output,
     const rknn_output * score_sum_output,
