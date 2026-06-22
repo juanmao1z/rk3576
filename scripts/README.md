@@ -15,6 +15,8 @@ scripts/
   windows/
     start_camera_cpp.ps1
     stop_camera_cpp.ps1
+    start_multi_camera_cpp.ps1
+    stop_multi_camera_cpp.ps1
     start_yolo_cpp.ps1
     stop_yolo_cpp.ps1
     start_yolo_py.ps1
@@ -32,6 +34,12 @@ scripts/
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_camera_cpp.ps1
+```
+
+启动双路 C++ 摄像头：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_multi_camera_cpp.ps1
 ```
 
 启动通用 YOLO C++ Canvas：
@@ -59,6 +67,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\win
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_yolo_py.ps1
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_yolo_py_canvas.ps1
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_multi_camera_cpp.ps1
 ```
 
 PC 端无人机模型快速测试：
@@ -81,6 +90,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\win
 | 服务 | 本机端口 |
 | --- | --- |
 | 摄像头原始 MJPEG | `8081` |
+| 双路摄像头 left MJPEG | `8082` |
 | YOLO Python 服务端画框 | `8090` |
 | YOLO Python Canvas | `8091` |
 | YOLO C++ Canvas | `8092` |
@@ -91,4 +101,11 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\win
 adb forward --list
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8081/health
 Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8092/health
+```
+
+双路摄像头通过 SSH 直接访问开发板端口：
+
+```powershell
+Invoke-WebRequest -UseBasicParsing http://192.168.137.217:8081/health
+Invoke-WebRequest -UseBasicParsing http://192.168.137.217:8082/health
 ```

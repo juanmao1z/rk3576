@@ -1,0 +1,19 @@
+dm_h3510_ros_cpp_node:
+  ros__parameters:
+    position_topic: /gimbal/position_cmd
+    target_joint_topic: /gimbal/target_joint_state
+    state_topic: /gimbal/state
+    joint_name: dm_h3510_joint
+    default_velocity_rad_s: 1.0
+    command_period_ms: 20
+    switch_mode_on_start: true
+    can:
+      channel: 0
+      canfd: false
+      brs: false
+      nominal_baud: 1000000
+      data_baud: 5000000
+    motor:
+      can_id: 1
+      master_id: 17
+      position_velocity_id_offset: 256

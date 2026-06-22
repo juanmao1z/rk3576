@@ -57,6 +57,29 @@ http://127.0.0.1:8081/
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_camera_cpp.ps1
 ```
 
+### 双路摄像头 C++ 原始流
+
+默认通过 SSH 启动开发板上的 front/left 两路 USB 摄像头：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_multi_camera_cpp.ps1
+```
+
+打开：
+
+```text
+http://192.168.137.217:8081/
+http://192.168.137.217:8082/
+```
+
+关闭：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_multi_camera_cpp.ps1
+```
+
+当前双路实现使用独立设备、独立 ROS2 话题和独立端口。不要让两路摄像头共用 `/camera/image_mjpeg` 或同一个 Web 端口。
+
 ### 通用 YOLO C++ Canvas
 
 ```powershell
@@ -133,6 +156,14 @@ D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
 
 该目录保存 Python/C++ ROS2 节点、板端构建脚本和部署脚本。它发布 `/gimbal/state`，订阅 `/gimbal/position_cmd` 和 `/gimbal/target_joint_state`。
 
+Windows 部署和板端构建：
+
+```powershell
+cd D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
+.\scripts\windows\deploy_to_board.ps1
+adb shell "bash /home/lckfb/workspace/dm_h3510_ros_ws/scripts/board/build_cpp_ros.sh"
+```
+
 ### DM-H3510 工程资料和 PC 烟测
 
 工作区：
@@ -143,11 +174,20 @@ D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
 
 该目录保存 PC 侧 USB2CANFD 烟测、工程记录、配置样例和协议资料。它不是 ROS2 主工作区。
 
+PC 端 USB2CANFD 烟测入口：
+
+```powershell
+cd D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+.\scripts\windows\list_usb2canfd.ps1
+.\scripts\windows\run_dm_h3510_control.ps1 -Velocity 1 -DurationMs 2000
+```
+
 ## 端口和 ROS 话题
 
 | 服务 | 默认端口 | 说明 |
 | --- | --- | --- |
 | C++ 摄像头 MJPEG | `8081` | 摄像头原始图像流 |
+| C++ 双路摄像头 left | `8082` | 第二路摄像头原始图像流 |
 | YOLO Python 服务端画框 | `8090` | 后端输出已画框 MJPEG |
 | YOLO Python Canvas | `8091` | 浏览器 Canvas 叠加检测框 |
 | YOLO C++ / Drone C++ Canvas | `8092` | 浏览器 Canvas 叠加检测框 |

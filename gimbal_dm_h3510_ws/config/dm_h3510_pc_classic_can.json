@@ -1,0 +1,31 @@
+{
+  "transport": {
+    "type": "dm_usb2canfd",
+    "channel": 0,
+    "canfd": false,
+    "brs": false,
+    "nominal_baud": 1000000,
+    "data_baud": 5000000
+  },
+  "motor": {
+    "model": "DM-H3510",
+    "can_id": 1,
+    "master_id": 17,
+    "velocity_id_offset": 512,
+    "control_mode": "speed",
+    "switch_mode_on_start": false
+  },
+  "runtime": {
+    "default_velocity_rad_s": 0.0,
+    "default_duration_ms": 2000,
+    "command_period_ms": 20
+  },
+  "trace_reference": {
+    "source": "D:/Desktop/data.csv",
+    "velocity_command_id": "0x201",
+    "velocity_1_rad_s_payload": "00 00 80 3F",
+    "velocity_5_rad_s_payload": "00 00 A0 40",
+    "enable_payload": "FF FF FF FF FF FF FF FC",
+    "disable_payload": "FF FF FF FF FF FF FF FD"
+  }
+}

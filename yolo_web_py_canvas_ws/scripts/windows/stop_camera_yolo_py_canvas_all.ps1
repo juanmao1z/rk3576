@@ -1,4 +1,4 @@
-<# 
+<#
 关闭 YOLO Python Canvas 完整链路。
 该脚本先调用开发板关闭脚本，再清理 Windows 侧 ADB 端口映射。
 #>

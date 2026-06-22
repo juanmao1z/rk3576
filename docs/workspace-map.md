@@ -61,6 +61,7 @@ D:\Desktop\rk3576\workspace\docs\workspace-organization.md
 | 服务 | 端口 | 工作区 |
 | --- | --- | --- |
 | 摄像头原始流 | `8081` | `camera_web_cpp_ws` |
+| 双路摄像头 left 原始流 | `8082` | `camera_web_cpp_ws` |
 | YOLO Python 服务端画框 | `8090` | `yolo_web_py_ws` |
 | YOLO Python Canvas | `8091` | `yolo_web_py_canvas_ws` |
 | YOLO C++ Canvas | `8092` | `yolo_web_cpp_ws` / `drone_yolo_web_cpp_ws` |
@@ -84,6 +85,8 @@ D:\Desktop\rk3576\workspace\docs\workspace-organization.md
 | 话题 | 类型 | 发布者 |
 | --- | --- | --- |
 | `/camera/image_mjpeg` | `sensor_msgs/msg/CompressedImage` | `camera_web_cpp` |
+| `/camera/front/image_mjpeg` | `sensor_msgs/msg/CompressedImage` | `camera_web_cpp` 双路 front |
+| `/camera/left/image_mjpeg` | `sensor_msgs/msg/CompressedImage` | `camera_web_cpp` 双路 left |
 | `/yolo/detections` | `vision_msgs/msg/Detection2DArray` | 当前运行的 YOLO 工作区 |
 | `/gimbal/state` | `sensor_msgs/msg/JointState` | `dm_h3510_ros_ws` |
 | `/gimbal/position_cmd` | `std_msgs/msg/Float32` | `dm_h3510_ros_ws` 订阅 |

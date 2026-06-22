@@ -1,0 +1,18 @@
+{
+  "sdk_root": "D:/Desktop/\u6a21\u5757\u8d44\u6599/\u7535\u673a\u9a71\u52a8\u8d44\u6599/dm-tools/USB2CANFD/SDK/\u65e7\u7248/Python",
+  "serial_number": "",
+  "nominal_baud": 1000000,
+  "data_baud": 5000000,
+  "motor": {
+    "type": "DMH3510",
+    "can_id": 1,
+    "master_id": 17,
+    "control": "velocity",
+    "safe_velocity_rad_s": 0.0,
+    "motion_velocity_rad_s": 0.5
+  },
+  "test": {
+    "duration_s": 3.0,
+    "period_s": 0.02
+  }
+}

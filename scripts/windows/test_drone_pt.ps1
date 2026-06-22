@@ -1,4 +1,4 @@
-<# 
+<#
 workspace 级无人机 PT 快速检测入口。
 默认转发到 drone_pt_detector/scripts/detect.ps1，并启用 -DroneOnly 过滤。
 #>

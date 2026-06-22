@@ -1,4 +1,4 @@
-<# 
+<#
 workspace 级无人机数据集验证入口。
 按固定顺序验证当前保存的 Maciullo snippet 和 kc34251 测试集。
 #>

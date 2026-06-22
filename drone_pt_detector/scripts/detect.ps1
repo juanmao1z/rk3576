@@ -1,4 +1,4 @@
-<# 
+<#
 运行无人机 PT 模型检测。
 该脚本负责确保虚拟环境存在，并把 PowerShell 参数转发给 src/drone_pt_detector.py detect。
 #>

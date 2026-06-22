@@ -9,3 +9,8 @@
 3. 状态读取和故障处理。
 4. ROS2 节点或轻量控制进程。
 5. 订阅 `/yolo/detections` 后的目标跟踪控制。
+
+## PC 端 SDK 验证例程
+
+- `pc_dm_h3510_smoke.py`：通过达妙 `DM_DeviceSDK` 控制 DM-H3510，不依赖 DMTool 图形上位机。
+- 默认执行零速速度控制并打印反馈；需要真实转动时显式加 `--allow-motion`。

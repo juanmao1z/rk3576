@@ -1,4 +1,4 @@
-<# 
+<#
 测试 DAMO-YOLO UAV checkpoint。
 该 checkpoint 不是 Ultralytics 格式，必须进入 third_party/DAMO-YOLO-master 使用专用脚本。
 #>

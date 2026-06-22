@@ -40,6 +40,12 @@ RTSP 输入会把第一个组件替换为 `RtspMjpegPublisher`：
 - 发布到同一个 `/camera/image_mjpeg`
 - 让下游 YOLO 和 Web 转发逻辑保持不变
 
+双路摄像头会启动两个独立的组件容器：
+
+- front：`/dev/video73` -> `/camera/front/image_mjpeg` -> `8081`
+- left：`/dev/video75` -> `/camera/left/image_mjpeg` -> `8082`
+- 两路摄像头使用独立话题和端口，避免同一个发布者覆盖另一条链路
+
 两个组件都启用了 `use_intra_process_comms`，压缩帧在同进程内传递，减少 DDS 序列化和额外拷贝。
 
 ## 为什么这里不重新编码
@@ -111,6 +117,16 @@ RTSP 网络摄像头启动示例：
   --fps 25
 ```
 
+双路 USB 摄像头启动示例：
+
+```bash
+/home/lckfb/workspace/ros/camera_web_cpp_ws/start_multi_camera_web_cpp.sh \
+  --front-device /dev/video73 \
+  --left-device /dev/video75 \
+  --size 640x480 \
+  --fps 25
+```
+
 Windows 侧通过一键 YOLO 脚本启动时也可以传同样的分辨率选项，例如：
 
 ```powershell
@@ -142,6 +158,19 @@ ros2 launch camera_web_cpp rtsp_camera_web_cpp.launch.py \
   fps:=25 \
   jpeg_quality:=85 \
   port:=8081
+```
+
+双路脚本等价于：
+
+```bash
+ros2 launch camera_web_cpp multi_camera_web_cpp.launch.py \
+  front_device:=/dev/video73 \
+  left_device:=/dev/video75 \
+  width:=640 \
+  height:=480 \
+  fps:=25 \
+  front_port:=8081 \
+  left_port:=8082
 ```
 
 如果从 Windows 通过 ADB 查看网页，需要映射端口：
