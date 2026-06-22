@@ -1,18 +1,19 @@
 # camera_web_cpp_ws
 
-RK3576 开发板上的 C++ 摄像头 MJPEG Web 工作区。它负责从 USB 摄像头读取原生 MJPEG 压缩帧，发布 ROS2 压缩图像话题，并把同一份帧数据转发给浏览器。
+RK3576 开发板上的 C++ 摄像头 MJPEG Web 工作区。它负责从 USB 摄像头或 RTSP 网络摄像头读取图像，发布 ROS2 压缩图像话题，并把同一份帧数据转发给浏览器。
 
 ## 项目定位
 
 - 主用途：提供低开销摄像头原始流，供 YOLO C++、YOLO Python 和浏览器预览共同使用。
 - 当前主线：优先使用本 C++ 工作区，`camera_web_ws` 仅作为 Python 旧版/备用实现。
-- 性能边界：本工作区不解码图像、不画框、不重新编码 JPEG。
+- 性能边界：USB MJPEG 路径不解码图像、不画框、不重新编码 JPEG；RTSP H.264 路径会解码并编码为 JPEG，再发布给下游。
 
 ## 目录结构
 
 ```text
 camera_web_cpp_ws/
   start_camera_web_cpp.sh       开发板启动脚本
+  start_rtsp_camera_web_cpp.sh  开发板 RTSP 启动脚本
   stop_camera_web_cpp.sh        开发板关闭脚本
   src/camera_web_cpp/           ROS2 C++ 包
     include/camera_web_cpp/     组件头文件
@@ -25,6 +26,7 @@ camera_web_cpp_ws/
 | 项目 | 默认值 |
 | --- | --- |
 | 摄像头设备 | `/dev/video73` |
+| RTSP 输入 | 通过 `start_rtsp_camera_web_cpp.sh --rtsp-url` 指定 |
 | 图像格式 | `MJPEG` |
 | 默认分辨率 | `640x480` |
 | 默认帧率 | `25 FPS` |
@@ -38,6 +40,17 @@ camera_web_cpp_ws/
 ```text
 /dev/video73
   -> V4L2 MMAP 读取 MJPEG 压缩帧
+  -> sensor_msgs/msg/CompressedImage
+  -> /camera/image_mjpeg
+  -> http://127.0.0.1:8081/stream.mjpg
+```
+
+RTSP 网络摄像头路径：
+
+```text
+rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101
+  -> OpenCV/FFmpeg 读取 H.264
+  -> JPEG 编码
   -> sensor_msgs/msg/CompressedImage
   -> /camera/image_mjpeg
   -> http://127.0.0.1:8081/stream.mjpg
@@ -65,6 +78,15 @@ colcon build --symlink-install --packages-select camera_web_cpp
 
 ```bash
 /home/lckfb/workspace/ros/camera_web_cpp_ws/start_camera_web_cpp.sh --size 1280x720
+```
+
+启动 RTSP 网络摄像头：
+
+```bash
+/home/lckfb/workspace/ros/camera_web_cpp_ws/start_rtsp_camera_web_cpp.sh \
+  --rtsp-url "rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101" \
+  --size 1280x960 \
+  --fps 25
 ```
 
 Windows 统一入口会自动通过 ADB 启动开发板服务并转发 `8081`：
@@ -104,6 +126,8 @@ curl http://127.0.0.1:8081/health
 curl http://127.0.0.1:8081/metrics
 ss -ltnp | grep 8081
 ```
+
+RTSP 输入正常时，`/health` 中 `frames` 会持续增加。网络摄像头当前验证过的码流为 `1280x960@25`。
 
 Windows 侧检查 ADB 转发：
 

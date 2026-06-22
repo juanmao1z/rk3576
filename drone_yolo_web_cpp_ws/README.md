@@ -49,6 +49,15 @@ browser
   原始 MJPEG 图像 + Canvas drone 检测框
 ```
 
+网络摄像头 RTSP 输入时，前半段替换为：
+
+```text
+RTSP camera
+  rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101
+  -> rtsp_camera_web_cpp -> /camera/image_mjpeg
+  -> http://127.0.0.1:8081/stream.mjpg
+```
+
 ## 构建
 
 在开发板上执行：
@@ -91,10 +100,26 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_
 powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Labels drone,bird
 ```
 
+使用网络摄像头 RTSP 输入：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Source rtsp -RtspUrl "rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101" -Size 1280x960 -Fps 25
+```
+
 开发板直接启动完整链路：
 
 ```bash
 /home/lckfb/workspace/drone_yolo_web_cpp_ws/scripts/board/start_drone_yolo_cpp_all.sh --size 1280x720
+```
+
+开发板直接使用 RTSP：
+
+```bash
+/home/lckfb/workspace/drone_yolo_web_cpp_ws/scripts/board/start_drone_yolo_cpp_all.sh \
+  --source rtsp \
+  --rtsp-url "rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101" \
+  --size 1280x960 \
+  --fps 25
 ```
 
 ## 关闭
@@ -150,6 +175,14 @@ Windows 侧确认端口映射：
 
 ```powershell
 adb forward --list
+```
+
+RTSP 链路已验证的健康检查示例：
+
+```text
+camera_web_cpp: frames>0
+drone_yolo_web_cpp: result_fps≈25
+/detections: image_width=1280, image_height=960
 ```
 
 包内详细说明见 `src\drone_yolo_web_cpp\README.md`。

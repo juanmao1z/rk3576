@@ -4,13 +4,78 @@
 set -Eeuo pipefail
 
 YOLO_WS=/home/lckfb/workspace/drone_yolo_web_cpp_ws
-CAMERA_SCRIPT=/home/lckfb/workspace/ros/camera_web_cpp_ws/start_camera_web_cpp.sh
+USB_CAMERA_SCRIPT=/home/lckfb/workspace/ros/camera_web_cpp_ws/start_camera_web_cpp.sh
+RTSP_CAMERA_SCRIPT=/home/lckfb/workspace/ros/camera_web_cpp_ws/start_rtsp_camera_web_cpp.sh
 YOLO_CPP_SCRIPT=${YOLO_WS}/scripts/board/start_drone_yolo_web_cpp.sh
 CAMERA_LOG=/tmp/camera_web_cpp.log
 YOLO_CPP_LOG=/tmp/drone_yolo_web_cpp.log
 CAMERA_HEALTH=http://127.0.0.1:8081/health
 YOLO_CPP_HEALTH=http://127.0.0.1:8092/health
-CAMERA_ARGS=("$@")
+CAMERA_SOURCE=usb
+RTSP_URL=${RTSP_URL:-}
+CAMERA_ARGS=()
+
+usage() {
+  cat <<'EOF'
+Usage: start_drone_yolo_cpp_all.sh [camera options]
+
+Options:
+  --source usb|rtsp     Camera input source. Default: usb.
+  --rtsp-url URL        RTSP URL used when --source rtsp is selected.
+  --size WIDTHxHEIGHT   Camera output size.
+  --width WIDTH         Camera output width.
+  --height HEIGHT       Camera output height.
+  --fps FPS             Camera FPS.
+  --device PATH         USB camera device path.
+  --port PORT           Camera HTTP port.
+  -h, --help            Show this help.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --source)
+      CAMERA_SOURCE=$2
+      shift 2
+      ;;
+    --rtsp-url)
+      RTSP_URL=$2
+      shift 2
+      ;;
+    --size|--width|--height|--fps|--device|--port)
+      CAMERA_ARGS+=("$1" "$2")
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+case "${CAMERA_SOURCE}" in
+  usb)
+    CAMERA_SCRIPT=${USB_CAMERA_SCRIPT}
+    ;;
+  rtsp)
+    CAMERA_SCRIPT=${RTSP_CAMERA_SCRIPT}
+    if [[ -z "${RTSP_URL}" ]]; then
+      echo "RTSP URL is required when --source rtsp is selected." >&2
+      exit 1
+    fi
+    CAMERA_ARGS=("--rtsp-url" "${RTSP_URL}" "${CAMERA_ARGS[@]}")
+    ;;
+  *)
+    echo "Unsupported camera source: ${CAMERA_SOURCE}" >&2
+    usage >&2
+    exit 1
+    ;;
+esac
 
 stop_old_processes() {
   # 同一时间只保留一个 YOLO 发布者，避免 /yolo/detections 出现多个 publisher。
@@ -71,7 +136,7 @@ main() {
   : >"${CAMERA_LOG}"
   : >"${YOLO_CPP_LOG}"
 
-  echo "Starting C++ camera service on 8081..."
+  echo "Starting C++ ${CAMERA_SOURCE} camera service on 8081..."
   nohup "${CAMERA_SCRIPT}" "${CAMERA_ARGS[@]}" >"${CAMERA_LOG}" 2>&1 &
   camera_pid=$!
   wait_for_http "camera_web_cpp" "${CAMERA_HEALTH}" "${CAMERA_LOG}" 1

@@ -16,6 +16,7 @@ find_package(sensor_msgs REQUIRED)
 add_library(camera_web_cpp_components SHARED
   src/runtime_shared_state.cpp
   src/camera_mjpeg_publisher.cpp
+  src/rtsp_mjpeg_publisher.cpp
   src/compressed_mjpeg_server.cpp
 )
 target_include_directories(camera_web_cpp_components PUBLIC include)
@@ -24,6 +25,7 @@ target_link_libraries(camera_web_cpp_components ${OpenCV_LIBS})
 # 向 rclcpp_components 注册两个可组合节点，launch 文件按插件名加载它们。
 rclcpp_components_register_nodes(camera_web_cpp_components
   "camera_web_cpp::CameraMjpegPublisher"
+  "camera_web_cpp::RtspMjpegPublisher"
   "camera_web_cpp::CompressedMjpegServer"
 )
 
