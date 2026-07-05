@@ -48,13 +48,13 @@
 
 - [x] **步骤 1：确认核心目录仍在原位**
 
-运行：`Get-ChildItem D:\Desktop\rk3576\workspace -Directory`
+运行：`Get-ChildItem . -Directory`
 
 - [x] **步骤 2：确认新文档引用存在**
 
-运行：`rg -n "workspace-organization|低风险|逻辑分层" D:\Desktop\rk3576\workspace\README.md D:\Desktop\rk3576\workspace\docs`
+运行：`rg -n "workspace-organization|低风险|逻辑分层" .\README.md .\docs`
 
 - [x] **步骤 3：确认未依赖 git**
 
-运行：`git -C D:\Desktop\rk3576 status --short`
+运行：`git -C .. status --short`
 预期：不是 git 仓库，最终报告说明无法用 git diff 验证。

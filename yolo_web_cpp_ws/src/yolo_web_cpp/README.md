@@ -74,25 +74,25 @@ colcon build --symlink-install --packages-up-to yolo_web_cpp
 Windows 侧启动完整 C++ 链路，并自动设置 ADB 端口映射：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1
 ```
 
 切换到 `1280x720`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Size 1280x720
 ```
 
 覆盖模型或标签：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/yolo/yolo_web_cpp_ws/models/yolo11.rknn -Labels coco
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/yolo/yolo_web_cpp_ws/models/yolo11.rknn -Labels coco
 ```
 
 Windows 侧关闭完整 C++ 链路，并移除 `8081/8092` 映射：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\stop_camera_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\stop_camera_yolo_cpp_all.ps1
 ```
 
 开发板侧启动：

@@ -79,7 +79,7 @@ class DmH3510RosNode(Node):
             hold_position = (
                 self._last_feedback.position_rad
                 if self._last_feedback is not None
-                else self._target_position
+                else self._to_motor_position(self._target_position)
             )
             self._driver.send_position_velocity(self._position_velocity_can_id, hold_position, 0.0)
             self._driver.disable(self._position_velocity_can_id)
@@ -93,7 +93,7 @@ class DmH3510RosNode(Node):
         self.declare_parameter("target_joint_topic", "/gimbal/target_joint_state")
         self.declare_parameter("state_topic", "/gimbal/state")
         self.declare_parameter("joint_name", "dm_h3510_joint")
-        self.declare_parameter("default_velocity_rad_s", 1.0)
+        self.declare_parameter("default_velocity_rad_s", 0.5)
         self.declare_parameter("command_period_ms", 20)
         self.declare_parameter("switch_mode_on_start", True)
         self.declare_parameter("can.channel", 0)
@@ -104,6 +104,8 @@ class DmH3510RosNode(Node):
         self.declare_parameter("motor.can_id", 1)
         self.declare_parameter("motor.master_id", 17)
         self.declare_parameter("motor.position_velocity_id_offset", 256)
+        self.declare_parameter("motor.gear_ratio", 35.0)
+        self.declare_parameter("motor.gear_direction", 1.0)
 
     def _load_parameters(self) -> None:
         self._library_path = self.get_parameter("library_path").value
@@ -124,6 +126,12 @@ class DmH3510RosNode(Node):
         self._position_velocity_id_offset = int(
             self.get_parameter("motor.position_velocity_id_offset").value
         )
+        self._gear_ratio = float(self.get_parameter("motor.gear_ratio").value)
+        self._gear_direction = (
+            -1.0 if float(self.get_parameter("motor.gear_direction").value) < 0.0 else 1.0
+        )
+        if self._gear_ratio <= 0.0:
+            raise ValueError("motor.gear_ratio must be greater than 0")
 
     def _resolve_library_path(self) -> str:
         """解析 libdm_device.so 位置，默认使用包内 vendor 目录。"""
@@ -162,8 +170,8 @@ class DmH3510RosNode(Node):
             return
         self._driver.send_position_velocity(
             self._position_velocity_can_id,
-            self._target_position,
-            self._target_velocity,
+            self._to_motor_position(self._target_position),
+            self._to_motor_velocity(self._target_velocity),
         )
 
     def _on_feedback(self, feedback: Feedback) -> None:
@@ -171,10 +179,22 @@ class DmH3510RosNode(Node):
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = [self._joint_name]
-        msg.position = [feedback.position_rad]
-        msg.velocity = [feedback.velocity_rad_s]
+        msg.position = [self._to_output_position(feedback.position_rad)]
+        msg.velocity = [self._to_output_velocity(feedback.velocity_rad_s)]
         msg.effort = [feedback.torque_nm]
         self._state_pub.publish(msg)
+
+    def _to_motor_position(self, output_position_rad: float) -> float:
+        return output_position_rad * self._gear_ratio * self._gear_direction
+
+    def _to_motor_velocity(self, output_velocity_rad_s: float) -> float:
+        return abs(output_velocity_rad_s) * self._gear_ratio
+
+    def _to_output_position(self, motor_position_rad: float) -> float:
+        return motor_position_rad / self._gear_ratio * self._gear_direction
+
+    def _to_output_velocity(self, motor_velocity_rad_s: float) -> float:
+        return motor_velocity_rad_s / self._gear_ratio
 
 
 def main() -> None:

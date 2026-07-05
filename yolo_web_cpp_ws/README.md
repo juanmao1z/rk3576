@@ -2,12 +2,14 @@
 
 通用 YOLO C++ Canvas 工作区。它在 RK3576 上使用 RKNN C API 推理，浏览器直接显示摄像头原始 MJPEG 流，并用 Canvas 叠加检测框。
 
+下面的 Windows 命令默认从 RK3576 项目目录执行。
+
 ## 项目定位
 
 - 主用途：通用 YOLO11 RKNN 检测，不绑定某一个业务类别。
 - 推理路径：C++ + RKNN C API。
 - 展示路径：服务端输出 JSON，浏览器 Canvas 叠加检测框。
-- 无人机专用版本：`D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws`。
+- 无人机专用版本：`.\drone_yolo_web_cpp_ws`。
 
 ## 目录结构
 
@@ -63,19 +65,19 @@ colcon build --symlink-install --packages-up-to yolo_web_cpp
 Windows 一键启动完整链路，并自动转发 `8081` 和 `8092`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1
 ```
 
 切换到 `1280x720` 时，摄像头脚本会自动请求 `30 FPS`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Size 1280x720
 ```
 
 覆盖模型和标签：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/yolo/yolo_web_cpp_ws/models/yolo11.rknn -Labels coco
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\start_camera_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/yolo/yolo_web_cpp_ws/models/yolo11.rknn -Labels coco
 ```
 
 开发板直接启动完整链路：
@@ -89,7 +91,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cp
 Windows 一键关闭完整链路，并移除 ADB 转发：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\scripts\windows\stop_camera_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_cpp_ws\scripts\windows\stop_camera_yolo_cpp_all.ps1
 ```
 
 开发板直接关闭：

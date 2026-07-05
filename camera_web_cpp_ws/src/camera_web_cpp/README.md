@@ -130,7 +130,7 @@ RTSP 网络摄像头启动示例：
 Windows 侧通过一键 YOLO 脚本启动时也可以传同样的分辨率选项，例如：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1 -Size 1280x720
 ```
 
 脚本等价于：

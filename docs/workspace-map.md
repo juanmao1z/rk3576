@@ -2,20 +2,31 @@
 
 RK3576 项目的目录地图和运行入口说明。该文档只描述自有工作区，不把第三方源码、数据集和构建产物纳入日常维护范围。
 
-## 总体分层
+## GitHub 发布位置
+
+同一份 RK3576 工程在 `ROS_CAR_PROJECT` 中有两个位置：
+
+| 分支 | RK3576 项目目录 |
+| --- | --- |
+| `feature/RK3576` | 仓库根目录 |
+| `main` | `robot_ws/src/rk3576` |
+
+下面的本机路径用于说明开发机上的目录分层。克隆到其他位置时，以 README 所在目录作为 RK3576 项目目录。
+
+## 本机总体分层
 
 ```text
-D:\Desktop\rk3576
+..
   workspace\     RK3576/YOLO/ROS2/DM-H3510 工程代码和运行脚本
   datasets\      外部数据集、原始压缩包、下载结果
   tools\         Windows 侧维护/下载工具
   temp\          临时模型包、评估输出和试验结果
 ```
 
-## workspace 工程区
+## 本机 workspace 工程区
 
 ```text
-D:\Desktop\rk3576\workspace
+.
   camera_web_cpp_ws\         C++ 摄像头原始 MJPEG Web 服务
   camera_web_ws\             Python 摄像头 MJPEG Web 旧版/备用实现
   yolo_web_cpp_ws\           通用 YOLO C++ Canvas 工作区
@@ -40,7 +51,7 @@ D:\Desktop\rk3576\workspace
 低风险整理阶段不移动现有目录。逻辑分层、维护边界和新增文件放置规则见：
 
 ```text
-D:\Desktop\rk3576\workspace\docs\workspace-organization.md
+docs\workspace-organization.md
 ```
 
 ## 推荐入口

@@ -2,7 +2,9 @@
 
 DM-H3510 云台工程资料和 PC 烟测工作区。这个目录保存 USB2CANFD 烟测、配置样例、协议记录和工程说明。
 
-ROS2 驱动主入口在 `D:\Desktop\rk3576\workspace\dm_h3510_ros_ws`。本目录不作为 ROS2 主工作区。
+ROS2 驱动主入口在 `.\dm_h3510_ros_ws`。本目录不作为 ROS2 主工作区。
+
+下面的 Windows 命令默认从 RK3576 项目目录执行。
 
 ## 是否需要新建工作区
 
@@ -70,7 +72,7 @@ ROS2 驱动接口以 `dm_h3510_ros_ws` 为准：
 当前优先使用 C++ v1.1 SDK 例程，因为它已经按 DMTool 抓包改为经典 CAN 1Mbps。
 
 ```powershell
-cd D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+cd .\gimbal_dm_h3510_ws
 .\scripts\windows\list_usb2canfd.ps1
 .\scripts\windows\run_dm_h3510_control.ps1 -Velocity 1 -DurationMs 2000
 ```

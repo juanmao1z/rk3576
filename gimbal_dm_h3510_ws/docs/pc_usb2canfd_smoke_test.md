@@ -34,7 +34,7 @@ D:/Desktop/rk3576/workspace/gimbal_dm_h3510_ws/src/dlls
 ## Step 1: list USB2CANFD serial number
 
 ```powershell
-cd D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+cd .\gimbal_dm_h3510_ws
 .\scripts\windows\list_usb2canfd.ps1
 ```
 

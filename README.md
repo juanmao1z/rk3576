@@ -1,12 +1,14 @@
 # RK3576 Workspace
 
-这是 RK3576 视觉、摄像头、YOLO/RKNN、ROS2、无人机检测和 DM-H3510 云台工程区。该目录是当前 Git 仓库根目录。
+这是 RK3576 视觉、摄像头、YOLO/RKNN、ROS2、无人机检测和 DM-H3510 云台工程区。本文档所在目录是 RK3576 项目目录。
 
 这里保留可维护代码、启动脚本、README、少量必要依赖和板端部署说明。数据集、临时训练输出、第三方上游源码、生成文档和模型文件不作为日常源码整理对象。
 
 ## 项目定位
 
-- `workspace` 是当前 RK3576 视觉项目的主入口，不建议再拆成新的顶层目录。
+- RK3576 项目目录是当前视觉项目的主入口，不建议再拆成新的顶层目录。
+- 在 `ROS_CAR_PROJECT` 中，`feature/RK3576` 分支把本项目放在仓库根目录；`main` 分支把本项目放在 `robot_ws/src/rk3576`。
+- 下面的 Windows 命令默认从 RK3576 项目目录执行。
 - 各 `*_ws` 目录已经被 Windows 一键脚本、开发板启动脚本和 README 引用，目录名本身是运行约定。
 - 通用 YOLO 和无人机 YOLO 分开维护：通用版本保留 COCO 标签和通用模型，无人机版本只保存无人机识别链路。
 - DM-H3510 ROS2 驱动放在 `dm_h3510_ros_ws`；云台工程资料、PC 烟测和配置记录放在 `gimbal_dm_h3510_ws`。
@@ -42,7 +44,7 @@
 ### 摄像头 C++ 原始流
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_camera_cpp.ps1
 ```
 
 打开：
@@ -54,7 +56,7 @@ http://127.0.0.1:8081/
 关闭：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\stop_camera_cpp.ps1
 ```
 
 ### 双路摄像头 C++ 原始流
@@ -62,7 +64,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\win
 默认通过 SSH 启动开发板上的 front/left 两路 USB 摄像头：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_multi_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_multi_camera_cpp.ps1
 ```
 
 打开：
@@ -75,7 +77,7 @@ http://192.168.137.217:8082/
 关闭：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_multi_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\stop_multi_camera_cpp.ps1
 ```
 
 当前双路实现使用独立设备、独立 ROS2 话题和独立端口。不要让两路摄像头共用 `/camera/image_mjpeg` 或同一个 Web 端口。
@@ -83,7 +85,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\win
 ### 通用 YOLO C++ Canvas
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_yolo_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_yolo_cpp.ps1
 ```
 
 打开：
@@ -101,7 +103,7 @@ http://127.0.0.1:8092/
 ### 无人机 YOLO C++ Canvas
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1
 ```
 
 打开：
@@ -119,7 +121,7 @@ http://127.0.0.1:8092/
 ### YOLO Python 服务端画框
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_yolo_py.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_yolo_py.ps1
 ```
 
 打开：
@@ -131,7 +133,7 @@ http://127.0.0.1:8090/
 ### YOLO Python Canvas
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_yolo_py_canvas.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_yolo_py_canvas.ps1
 ```
 
 打开：
@@ -143,7 +145,7 @@ http://127.0.0.1:8091/
 ### PC 端无人机 `.pt` 测试
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_pt_detector\scripts\detect.ps1 -Source 0 -Show -DroneOnly
+powershell -ExecutionPolicy Bypass -File .\drone_pt_detector\scripts\detect.ps1 -Source 0 -Show -DroneOnly
 ```
 
 ### DM-H3510 ROS2 驱动
@@ -151,7 +153,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_pt_de
 工作区：
 
 ```text
-D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
+.\dm_h3510_ros_ws
 ```
 
 该目录保存 Python/C++ ROS2 节点、板端构建脚本和部署脚本。它发布 `/gimbal/state`，订阅 `/gimbal/position_cmd` 和 `/gimbal/target_joint_state`。
@@ -159,7 +161,7 @@ D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
 Windows 部署和板端构建：
 
 ```powershell
-cd D:\Desktop\rk3576\workspace\dm_h3510_ros_ws
+cd .\dm_h3510_ros_ws
 .\scripts\windows\deploy_to_board.ps1
 adb shell "bash /home/lckfb/workspace/dm_h3510_ros_ws/scripts/board/build_cpp_ros.sh"
 ```
@@ -169,7 +171,7 @@ adb shell "bash /home/lckfb/workspace/dm_h3510_ros_ws/scripts/board/build_cpp_ro
 工作区：
 
 ```text
-D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+.\gimbal_dm_h3510_ws
 ```
 
 该目录保存 PC 侧 USB2CANFD 烟测、工程记录、配置样例和协议资料。它不是 ROS2 主工作区。
@@ -177,7 +179,7 @@ D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
 PC 端 USB2CANFD 烟测入口：
 
 ```powershell
-cd D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+cd .\gimbal_dm_h3510_ws
 .\scripts\windows\list_usb2canfd.ps1
 .\scripts\windows\run_dm_h3510_control.ps1 -Velocity 1 -DurationMs 2000
 ```
@@ -227,17 +229,17 @@ DM-H3510 ROS2 驱动发布/订阅云台相关接口。视觉侧继续只负责 `
 ## 常用文档
 
 ```text
-D:\Desktop\rk3576\README.md
-D:\Desktop\rk3576\workspace\docs\README.md
-D:\Desktop\rk3576\workspace\docs\workspace-map.md
-D:\Desktop\rk3576\workspace\docs\workspace-organization.md
-D:\Desktop\rk3576\workspace\docs\artifacts.md
-D:\Desktop\rk3576\workspace\camera_web_cpp_ws\README.md
-D:\Desktop\rk3576\workspace\yolo_web_cpp_ws\README.md
-D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\README.md
-D:\Desktop\rk3576\workspace\drone_pt_detector\README.md
-D:\Desktop\rk3576\workspace\dm_h3510_ros_ws\README.md
-D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws\README.md
+.\README.md
+.\docs\README.md
+.\docs\workspace-map.md
+.\docs\workspace-organization.md
+.\docs\artifacts.md
+.\camera_web_cpp_ws\README.md
+.\yolo_web_cpp_ws\README.md
+.\drone_yolo_web_cpp_ws\README.md
+.\drone_pt_detector\README.md
+.\dm_h3510_ros_ws\README.md
+.\gimbal_dm_h3510_ws\README.md
 ```
 
 ## 整理结论

@@ -175,6 +175,14 @@ bool DmUsb2Canfd::send_position_velocity(
   return send_can(position_velocity_can_id, payload.data(), static_cast<uint8_t>(payload.size()));
 }
 
+bool DmUsb2Canfd::send_velocity(uint32_t velocity_can_id, float velocity_rad_s)
+{
+  std::array<uint8_t, 4> payload {};
+  static_assert(sizeof(float) == 4, "速度命令需要 4 字节 float");
+  std::memcpy(payload.data(), &velocity_rad_s, sizeof(float));
+  return send_can(velocity_can_id, payload.data(), static_cast<uint8_t>(payload.size()));
+}
+
 void DmUsb2Canfd::recv_callback(dmcan_device_handle * handle, usb_rx_frame_t * frame)
 {
   std::lock_guard<std::mutex> lock(active_mutex_);

@@ -49,6 +49,7 @@ public:
     uint32_t position_velocity_can_id,
     float position_rad,
     float velocity_rad_s);
+  bool send_velocity(uint32_t velocity_can_id, float velocity_rad_s);
 
 private:
   static void recv_callback(dmcan_device_handle * handle, usb_rx_frame_t * frame);

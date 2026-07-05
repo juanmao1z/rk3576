@@ -2,7 +2,7 @@
 
 ## 背景
 
-用户要求使用 superpowers 重新调整 `D:\Desktop\rk3576\workspace` 文件结构，并选择低风险整理。当前 workspace 已经包含相机、YOLO、无人机检测、PC 训练、RKNN 示例、依赖归档、第三方源码和 DM-H3510 云台工作区。
+用户要求使用 superpowers 重新调整 `.` 文件结构，并选择低风险整理。当前 workspace 已经包含相机、YOLO、无人机检测、PC 训练、RKNN 示例、依赖归档、第三方源码和 DM-H3510 云台工作区。
 
 ## 目标
 

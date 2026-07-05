@@ -2,6 +2,8 @@
 
 YOLO Python Canvas 工作区。它使用 Python + RKNNLite 做推理，服务端只输出检测 JSON，浏览器直接显示摄像头原始 MJPEG 流并用 Canvas 叠加检测框。
 
+下面的 Windows 命令默认从 RK3576 项目目录执行。
+
 ## 项目定位
 
 - 主用途：保留 Python 推理 + 浏览器 Canvas 叠框版本。
@@ -62,13 +64,13 @@ colcon build --symlink-install --packages-up-to yolo_web_py_canvas
 Windows 一键启动完整链路，并自动转发 `8081` 和 `8091`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1
 ```
 
 切换到 `1280x720` 时，摄像头脚本会自动请求 `30 FPS`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_canvas_ws\scripts\windows\start_camera_yolo_py_canvas_all.ps1 -Size 1280x720
 ```
 
 开发板直接启动完整链路：
@@ -82,7 +84,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py
 Windows 一键关闭完整链路，并移除 ADB 转发：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_canvas_ws\scripts\windows\stop_camera_yolo_py_canvas_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_canvas_ws\scripts\windows\stop_camera_yolo_py_canvas_all.ps1
 ```
 
 开发板直接关闭：

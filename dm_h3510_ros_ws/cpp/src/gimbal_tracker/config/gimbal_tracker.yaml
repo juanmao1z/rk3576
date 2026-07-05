@@ -1,0 +1,19 @@
+gimbal_tracker_node:
+  ros__parameters:
+    detections_topic: /yolo/detections
+    gimbal_state_topic: /gimbal/state
+    target_joint_topic: /gimbal/target_joint_state
+    joint_name: dm_h3510_joint
+    target_class: drone
+    min_confidence: 0.60
+    image_width: 640.0
+    image_height: 480.0
+    deadband_px: 40.0
+    kp_x: -0.0008
+    max_step_rad: 0.05
+    min_yaw_rad: -6.2832
+    max_yaw_rad: 6.2832
+    velocity_rad_s: 0.6
+    control_rate_hz: 10
+    lost_timeout_s: 0.5
+    dry_run: true

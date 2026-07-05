@@ -47,4 +47,12 @@ install(FILES "${DM_DEVICE_LIB}"
 install(DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME})
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_gear_conversion test/test_gear_conversion.cpp)
+  target_include_directories(test_gear_conversion PRIVATE include)
+  ament_add_gtest(test_initial_velocity_command test/test_initial_velocity_command.cpp)
+  target_include_directories(test_initial_velocity_command PRIVATE include)
+endif()
+
 ament_package()

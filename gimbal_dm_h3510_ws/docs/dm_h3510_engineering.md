@@ -46,7 +46,7 @@ Close DMTool first; the SDK and DMTool cannot own the USB2CANFD adapter at the
 same time.
 
 ```powershell
-cd D:\Desktop\rk3576\workspace\gimbal_dm_h3510_ws
+cd .\gimbal_dm_h3510_ws
 .\scripts\windows\run_dm_h3510_control.ps1 -Velocity 0 -DurationMs 200
 .\scripts\windows\run_dm_h3510_control.ps1 -Velocity 5 -DurationMs 2000
 ```

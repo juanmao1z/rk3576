@@ -2,6 +2,8 @@
 
 无人机实时检测 C++ Canvas 工作区。它专门保存 drone 场景的 RKNN C++ 推理代码、启动脚本和文档，不再混在通用 YOLO 工作区里。
 
+下面的 Windows 命令默认从 RK3576 项目目录执行。
+
 ## 项目定位
 
 - 主用途：使用摄像头实时检测无人机。
@@ -73,37 +75,37 @@ colcon build --symlink-install --packages-up-to drone_yolo_web_cpp
 Windows 一键启动完整链路，并自动转发 `8081` 和 `8092`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1
 ```
 
 切换到 `1280x720` 时，摄像头脚本会自动请求 `30 FPS`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720
 ```
 
 切换到 s 模型：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720 -Model /home/lckfb/workspace/trained_yolo11s_best_rk3576_i8.rknn
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Size 1280x720 -Model /home/lckfb/workspace/trained_yolo11s_best_rk3576_i8.rknn
 ```
 
 切换到 YOLOv5 模型：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolov5.rknn -Labels UAV
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Model /home/lckfb/workspace/drone_yolo_web_cpp_ws/models/yolov5.rknn -Labels UAV
 ```
 
 多类别模型可以传逗号分隔标签：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Labels drone,bird
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Labels drone,bird
 ```
 
 使用网络摄像头 RTSP 输入：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Source rtsp -RtspUrl "rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101" -Size 1280x960 -Fps 25
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\start_drone_yolo_cpp_all.ps1 -Source rtsp -RtspUrl "rtsp://admin:Lgw2003823@192.168.110.47:554/Streaming/Channels/101" -Size 1280x960 -Fps 25
 ```
 
 开发板直接启动完整链路：
@@ -127,7 +129,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_
 Windows 一键关闭完整链路，并移除 ADB 转发：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\drone_yolo_web_cpp_ws\scripts\windows\stop_drone_yolo_cpp_all.ps1
+powershell -ExecutionPolicy Bypass -File .\drone_yolo_web_cpp_ws\scripts\windows\stop_drone_yolo_cpp_all.ps1
 ```
 
 开发板直接关闭：

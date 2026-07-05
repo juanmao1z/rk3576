@@ -2,6 +2,8 @@
 
 YOLO Python 服务端画框工作区。它订阅摄像头 MJPEG 压缩图像，使用 RKNNLite 推理，在服务端用 OpenCV 画框并重新编码为带框 MJPEG 结果流。
 
+下面的 Windows 命令默认从 RK3576 项目目录执行。
+
 ## 项目定位
 
 - 主用途：保留 Python 版 YOLO Web 实现，便于调试和与 C++ 版做效果对照。
@@ -60,13 +62,13 @@ colcon build --symlink-install --packages-up-to yolo_web_py
 Windows 一键启动完整链路，并自动转发 `8081` 和 `8090`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_ws\scripts\windows\start_camera_yolo_py_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_ws\scripts\windows\start_camera_yolo_py_all.ps1
 ```
 
 切换到 `1280x720` 时，摄像头脚本会自动请求 `30 FPS`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_ws\scripts\windows\start_camera_yolo_py_all.ps1 -Size 1280x720
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_ws\scripts\windows\start_camera_yolo_py_all.ps1 -Size 1280x720
 ```
 
 开发板直接启动完整链路：
@@ -80,7 +82,7 @@ powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py
 Windows 一键关闭完整链路，并移除 ADB 转发：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\yolo_web_py_ws\scripts\windows\stop_camera_yolo_py_all.ps1
+powershell -ExecutionPolicy Bypass -File .\yolo_web_py_ws\scripts\windows\stop_camera_yolo_py_all.ps1
 ```
 
 开发板直接关闭：

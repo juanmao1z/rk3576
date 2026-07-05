@@ -2,6 +2,8 @@
 
 RK3576 开发板上的 C++ 摄像头 MJPEG Web 工作区。它负责从 USB 摄像头或 RTSP 网络摄像头读取图像，发布 ROS2 压缩图像话题，并把同一份帧数据转发给浏览器。
 
+下面的 Windows 命令默认从 RK3576 项目目录执行。
+
 ## 项目定位
 
 - 主用途：提供低开销摄像头原始流，供 YOLO C++、YOLO Python 和浏览器预览共同使用。
@@ -103,13 +105,13 @@ colcon build --symlink-install --packages-select camera_web_cpp
 Windows 统一入口会自动通过 ADB 启动开发板服务并转发 `8081`：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_camera_cpp.ps1
 ```
 
 启动双路 USB 摄像头：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\start_multi_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\start_multi_camera_cpp.ps1
 ```
 
 默认开发板地址是 `192.168.137.217`，页面是：
@@ -130,13 +132,13 @@ http://192.168.137.217:8082/
 Windows 统一入口：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\stop_camera_cpp.ps1
 ```
 
 关闭双路 USB 摄像头：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File D:\Desktop\rk3576\workspace\scripts\windows\stop_multi_camera_cpp.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\windows\stop_multi_camera_cpp.ps1
 ```
 
 ## Web 接口
